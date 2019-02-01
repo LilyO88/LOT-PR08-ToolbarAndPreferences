@@ -20,6 +20,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.NavController;
+import androidx.navigation.NavDestination;
 import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -76,7 +77,7 @@ public class MainFragment extends Fragment {
 
     private void setupAppbar() {
         toolbar = ActivityCompat.requireViewById(requireActivity(), R.id.toolbarMain);
-        toolbar.setTitle(R.string.titleMainFragment);
+        navController.addOnDestinationChangedListener((controller, destination, arguments) -> toolbar.setTitle(R.string.titleMainFragment));
         ((AppCompatActivity)requireActivity()).setSupportActionBar(toolbar);
         appbarConfiguration = new AppBarConfiguration.Builder(navController.getGraph()).build();
         NavigationUI.setupWithNavController(toolbar, navController, appbarConfiguration);

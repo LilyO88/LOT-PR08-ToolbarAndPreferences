@@ -1,40 +1,39 @@
 package es.iessaladillo.pedrojoya.pr08.ui.main;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+import androidx.navigation.ui.AppBarConfiguration;
+import androidx.navigation.ui.NavigationUI;
 import es.iessaladillo.pedrojoya.pr08.R;
-import es.iessaladillo.pedrojoya.pr08.ui.detail.Detail_fragment;
-import es.iessaladillo.pedrojoya.pr08.ui.settings.Settings_fragment;
-import es.iessaladillo.pedrojoya.pr08.utils.FragmentUtils;
 
 import android.os.Bundle;
 
-public class MainActivity extends AppCompatActivity implements MainFragment.LoadDetailFragment, MainFragment.LoadSettingsFragment {
+public class MainActivity extends AppCompatActivity {
+
+    private NavController navController;
+    private AppBarConfiguration appbarConfiguration;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.main_activity);
-        if (savedInstanceState == null) {
-            FragmentUtils.replaceFragment(getSupportFragmentManager(),
-                            R.id.flContainerMainActivity, MainFragment.newInstance(), MainFragment.class.getSimpleName());
-        }
+        setContentView(R.layout.activity_main);
+        navController = Navigation.findNavController(this, R.id.navHostFragment);
+    }
+
+    private void setupAppbar() {
+        Toolbar toolbar = ActivityCompat.requireViewById(this, R.id.toolbarMain);
+        setSupportActionBar(toolbar);
+        appbarConfiguration = new AppBarConfiguration.Builder(navController.getGraph()).build();
+        NavigationUI.setupActionBarWithNavController(this, navController, appbarConfiguration);
     }
 
     @Override
-    public void onClickFab() {
-        FragmentUtils.replaceFragmentAddToBackstack(getSupportFragmentManager(), R.id.flContainerMainActivity, Detail_fragment.newInstance(),
-                Detail_fragment.class.getSimpleName(), MainFragment.class.getSimpleName(), 0);
-    }
-
-    @Override
-    public boolean onNavigateUp() {
-        onBackPressed();
-        return true;
-    }
-
-    @Override
-    public void onClickItemMenu() {
-        FragmentUtils.replaceFragmentAddToBackstack(getSupportFragmentManager(), R.id.flContainerMainActivity, Settings_fragment.newInstance(),
-                Detail_fragment.class.getSimpleName(), MainFragment.class.getSimpleName(), 0);
+    public boolean onSupportNavigateUp() {
+        //|| por si no funciona
+        return NavigationUI.navigateUp(navController, appbarConfiguration)
+                || super.onSupportNavigateUp();
     }
 }

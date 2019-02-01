@@ -16,7 +16,7 @@ Ahorarr ese que llega a wan diodenoo ese pedazo de te va a hasé pupitaa te voy 
 
 
 
-    <string name="app_name">Toolbar and Preferences</string>
+    <string name="app_name">Toolbar and Preferences - Navigation</string>
     <string name="toolbarLoremTitle">Lorem</string>
     <string name="detailTitle">Detail</string>
     <string name="settingsTitleToolbar">Settings</string>
@@ -26,6 +26,9 @@ Ahorarr ese que llega a wan diodenoo ese pedazo de te va a hasé pupitaa te voy 
     <string name="prefTextType_key">prefTextType</string>
     <string name="prefTextType_defaultValue">latin</string>
     <string name="titleSettingsMenu">Settings</string>
+    <string name="titleMainFragment">Lorem</string>
+    <string name="titleDetailFragment">Detail</string>
+    <string name="titleSettingsFragment">Settings</string>
 
     <string-array
         name="prefTextType_entries">

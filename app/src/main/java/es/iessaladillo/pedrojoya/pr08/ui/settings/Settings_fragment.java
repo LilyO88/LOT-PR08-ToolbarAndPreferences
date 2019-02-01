@@ -4,6 +4,10 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
+import androidx.navigation.NavController;
+import androidx.navigation.fragment.NavHostFragment;
+import androidx.navigation.ui.AppBarConfiguration;
+import androidx.navigation.ui.NavigationUI;
 import androidx.preference.PreferenceFragmentCompat;
 import es.iessaladillo.pedrojoya.pr08.R;
 
@@ -12,6 +16,7 @@ import android.os.Bundle;
 public class Settings_fragment extends PreferenceFragmentCompat {
 
     private Toolbar toolbar;
+    private NavController navController;
 
     public static Settings_fragment newInstance() {
         return new Settings_fragment();
@@ -31,21 +36,12 @@ public class Settings_fragment extends PreferenceFragmentCompat {
 
     private void setupViews() {
         toolbar = ActivityCompat.requireViewById(requireActivity(), R.id.toolbarSettings);
-
+        navController = NavHostFragment.findNavController(this);
     }
 
     private void setupToolbar() {
-        toolbar.setTitle(R.string.settingsTitleToolbar);
-        ((AppCompatActivity) requireActivity()).setSupportActionBar(toolbar);
-
-        ((AppCompatActivity) requireActivity()).getSupportActionBar().setDisplayShowTitleEnabled(true);
-        ((AppCompatActivity) requireActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-        toolbar.setNavigationOnClickListener(v -> onBackPressedFragment());
-    }
-
-    private void onBackPressedFragment() {
-        requireActivity().onBackPressed();
+        AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(navController.getGraph()).build();
+        NavigationUI.setupWithNavController(toolbar,  navController, appBarConfiguration);
     }
 
 }

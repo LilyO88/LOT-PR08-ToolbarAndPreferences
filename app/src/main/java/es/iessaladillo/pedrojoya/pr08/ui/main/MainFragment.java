@@ -1,7 +1,5 @@
 package es.iessaladillo.pedrojoya.pr08.ui.main;
 
-
-import android.content.Context;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -21,35 +19,44 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+import androidx.navigation.fragment.NavHostFragment;
+import androidx.navigation.ui.AppBarConfiguration;
+import androidx.navigation.ui.NavigationUI;
 import es.iessaladillo.pedrojoya.pr08.R;
 
 public class MainFragment extends Fragment {
 
-    private LoadDetailFragment loadDetailFragmentListener;
     private Toolbar toolbar;
-    private LoadSettingsFragment loadSettingsFragmentListener;
     private TextView txtLorem;
+    private NavController navController;
+    private AppBarConfiguration appbarConfiguration;
 
-    public static MainFragment newInstance() {
-        return new MainFragment();
+    public MainFragment() {
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.main_fragment, container, false);
+        return inflater.inflate(R.layout.fragment_main, container, false);
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        setHasOptionsMenu(true);
-        MainActivityViewModel viewModel = ViewModelProviders.of(this).get(
-                MainActivityViewModel.class);
+        navController = NavHostFragment.findNavController(this);
+        MainActivityViewModel viewModel = ViewModelProviders.of(this).get(MainActivityViewModel.class);
         setupViews();
         viewModel.getTxtContent().observe(this, this::setText);
-        setupToolbar();
+        setupAppbar();
     }
 
     private void setText(String key) {
@@ -60,48 +67,30 @@ public class MainFragment extends Fragment {
         }
     }
 
-    @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-        loadDetailFragmentListener = (LoadDetailFragment) context;
-        loadSettingsFragmentListener = (LoadSettingsFragment) context;
-    }
-
     private void setupViews() {
-        toolbar = ActivityCompat.requireViewById(requireActivity(), R.id.toolbarMain);
         FloatingActionButton fab = ActivityCompat.requireViewById(requireActivity(), R.id.fabMain);
         txtLorem = ActivityCompat.requireViewById(requireActivity(), R.id.textLoremMain);
-        
         //Fab's listener
-        fab.setOnClickListener(v -> loadDetailFragmentListener.onClickFab());
+        fab.setOnClickListener(Navigation.createNavigateOnClickListener(R.id.action_destMainFragment_to_destDetailFragment));
+    }
+
+    private void setupAppbar() {
+        toolbar = ActivityCompat.requireViewById(requireActivity(), R.id.toolbarMain);
+        toolbar.setTitle(R.string.titleMainFragment);
+        ((AppCompatActivity)requireActivity()).setSupportActionBar(toolbar);
+        appbarConfiguration = new AppBarConfiguration.Builder(navController.getGraph()).build();
+        NavigationUI.setupWithNavController(toolbar, navController, appbarConfiguration);
     }
 
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
-        inflater.inflate(R.menu.menu_main, menu);
         super.onCreateOptionsMenu(menu, inflater);
-    }
-
-    private void setupToolbar() {
-        toolbar.setTitle(R.string.toolbarLoremTitle);
-        ((AppCompatActivity) requireActivity()).setSupportActionBar(toolbar);
+        inflater.inflate(R.menu.menu_main, menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.itemSettings:
-                loadSettingsFragmentListener.onClickItemMenu();
-                break;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    public interface LoadDetailFragment {
-        void onClickFab();
-    }
-
-    public interface LoadSettingsFragment {
-        void onClickItemMenu();
+        return NavigationUI.onNavDestinationSelected(item, navController)
+                || super.onOptionsItemSelected(item);
     }
 }
